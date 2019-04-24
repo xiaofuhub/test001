@@ -1,0 +1,51 @@
+MFC改变drawtext输出字体格式
+
+HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);  //获取系统默认GUI字体
+LOGFONT logfont;
+GetObject(hFont,sizeof(LOGFONT),&logfont); 
+wcscpy(logfont.lfFaceName,L"宋体");//改变为宋体
+HFONT hNewFont = NULL;
+hNewFont = CreateFontIndirect(&logfont); //改变系统默认的字体，设为宋体，创建了一个新的HFONT 
+HFONT loldfont = (HFONT)(SelectObject(hdc,hNewFont));//选上新创建的这个，返回的是旧的
+
+
+用完之后还需要选回原来的，删除自己创建的。
+SelectObject(hdc,loldfont);
+DeleteObject(hNewFont);
+
+
+
+另外还可以自己完全创建新的字体
+
+CFont font;
+CFont * oldfont = NULL;
+VERIFY(font.CreateFont(10,10,0,0,FW_THIN,FALSE,FALSE,0,ANSI_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,DEFAULT_PITCH | FF_SWISS,_T("宋体")));  //创建新的字体               
+oldfont = (CFont*)(SelectObject(hdc,font));//选上新的字体
+
+用完同样需要选回原来的，删除自己创建的。
+
+SelectObject(hdc,oldfont);
+DeleteObject(font);
+
+
+
+设置字体为透明：
+
+HDC hdc;
+hdc = ::GetDC(this->m_hWnd);
+
+SetBkMode(hdc, TRANSPARENT);
+
+设置字体颜色：
+
+SetTextColor(hdc, RGB(255, 0, 0));  
+
+设置字体背景颜色:
+
+SetBkMode(hdc,OPAQUE);
+SetBkColor(hdc,RGB(70,163,255));
+--------------------- 
+作者：细粉条 
+来源：CSDN 
+原文：https://blog.csdn.net/liyun123gx/article/details/21733149 
+版权声明：本文为博主原创文章，转载请附上博文链接！
